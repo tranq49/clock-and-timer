@@ -10,26 +10,66 @@ body {
 	padding-top: 50px;
 }
 #time {
-	font-size: 24px;
+	font-size: 54px;
 }
+#countdown {
+	margin-top: 20px;
+	font-size: 46px;
 </style>
 </head>
 
 <body>
 	<div id="time"></div>
+	<div id="countdown">
+		<label for="hours">Hours:</label>
+		<input type="number" id="hours" value="0" min="0"><br>
+		<label for="minutes">Minutes:</label>
+		<input type="number" id="minutes" value="0" min="0" max="59"><br>
+		<label for="seconds">Seconds:</label>
+		<input type="number" id="seconds" value="0" min="0" max="59"><br>
+		<button onclick="startCountdown()">Start</button>
+		<button onclick="stopCountdown()">Stop</button>
+	</div>
 	<script>
+		var countdownInterval;
+		var countdownTime;
+
 		function updateTime() {
 			var currentTime = new Date();
 			var hours = currentTime.getHours();
 			var minutes = currentTime.getMinutes();
 			var seconds = currentTime.getSeconds();
 
-			minutes = (minutes < 10 ? "0" : "") + minutes;
-			seconds = (seconds < 10 ? "0" : "") + seconds;
-
-			var timeString = hours + ":" + minutes + ":" + seconds;
+			var timeString = hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
 			document.getElementById("time").innerText = timeString;
 		}
+
+		function startCountdown() {
+			var hours = parseInt(document.getElementById("hours").value);
+			var minutes = parseInt(document.getElementById("minutes").value);
+			var seconds = parseInt(document.getElementById("seconds").value);
+
+			countdownTime = hours*3600 + minutes*60 + seconds;
+			countdownInterval = setInterval(function() {
+				if (countdownTime <= 0) {
+					clearInterval(countdownInterval);
+					alert("Countdonw Timer Expired!");
+				} else {
+					var hoursRemaining = Math.floor(countdownTime/3600);
+					var minutesRemaining = Math.floor((countdownTime%3600) / 60);
+					var secondsRemaining = countdownTime % 60;
+
+					var countdownString = hoursRemaining + ":" + (minutesRemaining < 10 ? "0" : "") + minutesRemaining + ":" + (secondsRemaining < 10 ? "0" : "") + secondsRemaining;
+					document.getElementById("countdown").innerText = countdownString;
+
+					countdownTime--;
+				}
+			}, 1000);
+		}
+		function stopCountdown() {
+			clearInterval(countdownInterval);
+		}
+		
 		setInterval(updateTime, 1000);
 
 		updateTime();
