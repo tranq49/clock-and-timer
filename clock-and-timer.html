@@ -61,7 +61,7 @@ body {
 				var currentHours = currentTime.getHours();
 				var currentMinutes = currentTime.getMinutes();
 
-				if (targetHour < currentHours) {//Target time after midnight. This will still break for countdowns that end in the same hour on the next day. Might be better to just use seconds since epoch.
+				if (targetHour < currentHours || (targetHour == currentHours && targetMinutes < currentMinutes)) {//Target time after midnight.
 					remainingHours = 24 - currentHours + targetHour;
 				} else {
 					remainingHours = targetHour - currentHours;
