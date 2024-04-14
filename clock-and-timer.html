@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Clock and Timer</title>
+<style>
+body {
+	font-family: Arial, sans-serif;
+	text-align: center;
+	padding-top: 50px;
+	background-color: black;
+	color: white;
+}
+#time {
+	font-size: 40.0vmin;
+}
+#countdown {
+	margin-top: 20px;
+	font-size: 20px;
+	color: red;
+</style>
+</head>
+
+<body>
+
+	<div id="time"></div>
+
+	<div id="countdown">
+		<p id="countdownText" style="font-size: 30.0vmin;display:none;"></p>
+		<label for="countdownTime" id="countdownTimeLabel">Countdown Time:</label>
+		<input type="time" id="countdownTime" value="00:00">
+		<button onclick="startCountdown()" id="startButton">Start</button>
+		<button onclick="stopCountdown()" id="stopButton" style="display:none;">Stop</button>
+	</div>
+
+
+	<script>
+		var countdownInterval;
+		var countdownTime;
+
+		function updateTime() {
+			var currentTime = new Date();
+			var hours = currentTime.getHours();
+			var minutes = currentTime.getMinutes();
+			var seconds = currentTime.getSeconds();
+
+			var timeString = hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+			document.getElementById("time").innerText = timeString;
+		}
+
+
+		function startCountdown() {
+			//Hide Input field
+			document.getElementById("countdownTime").style.display = "none";
+			document.getElementById("countdownTimeLabel").style.display = "none";
+			document.getElementById("startButton").style.display = "none";
+			//document.getElementById("stopButton").style.display = "inline";
+			document.getElementById("countdownText").style.display = "inline";
+
+			var countdownInput = document.getElementById("countdownTime").value.split(":");
+			//No setting seconds as target time!!
+			var targetHour = parseInt(countdownInput[0]);
+			var targetMinutes = parseInt(countdownInput[1]);
+
+			var remainingHours;
+			var remainingMinutes;
+			var remainingSeconds;
+
+
+			function updateCountdown() {
+				var currentTime = new Date();
+				var currentHours = currentTime.getHours();
+				var currentMinutes = currentTime.getMinutes();
+
+				if (targetHour < currentHours || (targetHour == currentHours && targetMinutes < currentMinutes)) {//Target time after midnight.
+					remainingHours = 24 - currentHours + targetHour;
+				} else {
+					remainingHours = targetHour - currentHours;
+				}
+				if (targetMinutes >= currentMinutes) {
+					remainingMinutes = targetMinutes - currentMinutes;
+				} else {
+					remainingHours--;
+					remainingMinutes = 60 - currentMinutes + targetMinutes;
+				}
+
+
+				countdownTime = remainingHours*3600 + remainingMinutes*60 - currentTime.getSeconds();
+
+				if (countdownTime <= 0) {
+					clearInterval(countdownInterval);
+					alert("Countdonw Timer Expired!");
+				} else {
+					var hoursRemaining = Math.floor(countdownTime/3600);
+					var minutesRemaining = Math.floor((countdownTime%3600) / 60);
+					var secondsRemaining = countdownTime % 60;
+
+					var countdownString = hoursRemaining + ":" + (minutesRemaining < 10 ? "0" : "") + minutesRemaining + ":" + (secondsRemaining < 10 ? "0" : "") + secondsRemaining;
+					document.getElementById("countdownText").textContent = countdownString;
+
+
+				}
+			}
+			countdownInterval = setInterval(updateCountdown, 250);
+		}
+		function stopCountdown() {
+			clearInterval(countdownInterval);
+			rsetCountdown();
+		}
+		function resetCountdown() {
+		}
+		setInterval(updateTime, 250);
+
+		updateTime();
+	</script>
+</body>
+</html>
+
